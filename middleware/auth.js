@@ -28,3 +28,7 @@ export const isVendor = (req, res, next) => {
   if (req.user?.role === "vender") return next();
   return res.status(403).json({ message: "Access denied: Vendor only" });
 };
+export const isCustomer = (req, res, next) => {
+  if (req.user?.role === "customer") return next();
+  return res.status(403).json({ message: "Access denied: Customer only" });
+};
