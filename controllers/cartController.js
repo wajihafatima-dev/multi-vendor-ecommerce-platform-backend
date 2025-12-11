@@ -10,7 +10,29 @@ export const getCart = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+// for guest
+export const mergeCart = async (req, res) => {
+  const userId = req.user._id;
+  const { items } = req.body;
 
+  let cart = await Cart.findOne({ user: userId });
+
+  if (!cart) {
+    cart = new Cart({ user: userId, items: [] });
+  }
+
+  items.forEach(item => {
+    const existing = cart.items.find(i => i.product.toString() === item._id);
+    if (existing) {
+      existing.quantity += item.quantity;
+    } else {
+      cart.items.push({ product: item._id, quantity: item.quantity });
+    }
+  });
+
+  await cart.save();
+  res.json(cart);
+};
 export const addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
